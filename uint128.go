@@ -435,7 +435,6 @@ func (u *Uint128) UnmarshalJSON(b []byte) error {
 	}
 
 	u.SetString(str, 10)
-	fmt.Println("unmarshalled:", u)
 	return nil
 }
 
