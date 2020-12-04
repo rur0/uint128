@@ -417,12 +417,9 @@ func FromString(s string, base int) (Uint128, bool) {
 // SetString sets a string of a given base to the existing Uint128 value.
 func (u *Uint128) SetString(s string, b int) error {
 	newUint, isOK := FromString(s, b)
-	fmt.Println(isOK)
-	fmt.Println("newUint:", newUint)
 	if isOK {
 		u.Lo = newUint.Lo
 		u.Hi = newUint.Hi
-		fmt.Println("nowUint:", u)
 		return nil
 	}
 
