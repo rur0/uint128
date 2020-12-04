@@ -1,12 +1,14 @@
-package uint128 // import "lukechampine.com/uint128"
+package uint128 // import "github.com/rur0/uint128"
 
 import (
 	"encoding/binary"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"math"
 	"math/big"
 	"math/bits"
 )
-
 // Zero is a zero-valued uint128.
 var Zero Uint128
 
@@ -399,6 +401,45 @@ func FromBytes(b []byte) Uint128 {
 		binary.LittleEndian.Uint64(b[:8]),
 		binary.LittleEndian.Uint64(b[8:]),
 	)
+}
+
+// FromString converts string of a given base to a Uint128 value.
+func FromString(s string, base int) (Uint128, bool) {
+	i := big.Int{}
+	z, ok := i.SetString(s, base)
+	if ok {
+		return FromBig(z), true
+	}
+
+	return Zero, false
+}
+
+// SetString sets a string of a given base to the existing Uint128 value.
+func (u *Uint128) SetString(s string, b int) error {
+	newUint, isOK := FromString(s, b)
+	fmt.Println(isOK)
+	fmt.Println("newUint:", newUint)
+	if isOK {
+		u.Lo = newUint.Lo
+		u.Hi = newUint.Hi
+		fmt.Println("nowUint:", u)
+		return nil
+	}
+
+	return errors.New("invalid int string")
+}
+
+// UnmarshalJSON unmarshals a byte string of base 10 to a Uint128 value.
+func (u *Uint128) UnmarshalJSON(b []byte) error {
+	var str string
+	err := json.Unmarshal(b, &str)
+	if err != nil {
+		return err
+	}
+
+	u.SetString(str, 10)
+	fmt.Println("unmarshalled:", u)
+	return nil
 }
 
 // FromBig converts i to a Uint128 value. It panics if i is negative or
